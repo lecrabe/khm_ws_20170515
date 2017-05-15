@@ -13,10 +13,6 @@
 # errors or deficiencies in this product to FAO.
 ####################################################################################
 
-#################### SET WORKING ENVIRONMENT
-roodir <- "khm_ws_20170515/data"
-setwd(roodir)
-
 #################### SET OPTIONS AND NECESSARY PACKAGES
 options(stringsAsFactors = FALSE)
 
@@ -26,8 +22,16 @@ library(rgeos)
 library(ggplot2)
 library(foreign)
 library(dplyr)
-library(corrplot)
 
 ############### DOWNLOAD WORKSHOP DATA
+list <- list.files("~/khm_ws_20170515/data")
 
+if(is.null(list)){
+  setwd("~/khm_ws_20170515")
+  system("wget https://www.dropbox.com/s/n5f6d7ssc2c4lqx/workshop_KHM_2017.zip?dl=0")
+  system("unzip workshop_KHM_2017.zip?dl=0" )
+}
 
+############### SET WORKING ENVIRONMENT
+rootdir <- "~/khm_ws_20170515/data/"
+setwd(rootdir)
