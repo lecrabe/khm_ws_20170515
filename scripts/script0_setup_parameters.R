@@ -15,7 +15,7 @@
 
 #################### SET OPTIONS AND NECESSARY PACKAGES
 options(stringsAsFactors = FALSE)
-print(test)
+
 library(raster)
 library(rgdal)
 library(rgeos)
