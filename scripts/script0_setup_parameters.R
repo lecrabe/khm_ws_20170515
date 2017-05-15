@@ -1,6 +1,6 @@
 ####################################################################################
 #######    object: SETUP YOUR LOCAL PARAMETERS                  ####################
-#######    Update : 2017/05/13                                  ####################
+#######    Update : 2017/05/15                                  ####################
 #######    contact: remi.dannunzio@fao.org                      ####################
 ####################################################################################
 
@@ -15,7 +15,7 @@
 
 #################### SET OPTIONS AND NECESSARY PACKAGES
 options(stringsAsFactors = FALSE)
-
+print(test)
 library(raster)
 library(rgdal)
 library(rgeos)
