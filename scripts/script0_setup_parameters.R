@@ -1,3 +1,7 @@
+### click on SOURCE
+
+
+
 ####################################################################################
 #######    object: SETUP YOUR LOCAL PARAMETERS                  ####################
 #######    Update : 2017/05/15                                  ####################
@@ -15,7 +19,7 @@
 
 #################### SET OPTIONS AND NECESSARY PACKAGES
 options(stringsAsFactors = FALSE)
-print(test)
+
 library(raster)
 library(rgdal)
 library(rgeos)
@@ -26,7 +30,7 @@ library(dplyr)
 ############### DOWNLOAD WORKSHOP DATA
 list <- list.files("~/khm_ws_20170515/data")
 
-if(is.null(list)){
+if(length(list)==0){
   setwd("~/khm_ws_20170515")
   system("wget https://www.dropbox.com/s/n5f6d7ssc2c4lqx/workshop_KHM_2017.zip?dl=0")
   system("unzip workshop_KHM_2017.zip?dl=0" )
@@ -34,4 +38,6 @@ if(is.null(list)){
 
 ############### SET WORKING ENVIRONMENT
 rootdir <- "~/khm_ws_20170515/data/"
+
+
 setwd(rootdir)
