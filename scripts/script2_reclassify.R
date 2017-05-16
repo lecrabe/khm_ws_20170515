@@ -25,6 +25,7 @@ df1$ipcc_chge <- df1$ipcc_code_14 *10 + df1$ipcc_code_16
 
 df1$final <- 0
 table(df1$ipcc_class_14,df1$ipcc_class_16,useNA = "always")
+
 ################## FOREST STABLE
 df1[df1$ipcc_class_14 == "F" & df1$ipcc_class_16 == "F",]$final <- 1
 
@@ -36,6 +37,14 @@ df1[df1$ipcc_class_14 == "F" & df1$ipcc_class_16 != "F",]$final <- 3
 
 ################## FORET GAINS
 df1[df1$ipcc_class_14 != "F" & df1$ipcc_class_16 == "F",]$final <- 4
+
+################## EVERGREEN LOSS TOWARDS AGRICULTURE
+df1[df1$class14 == "E" & df1$class16 == "Hc",]$final <- 5
+
+################## PLANTATIONS
+df1[df1$class14 == "Tp" & df1$class16 == "Tp",]$final <- 6
+
+
 
 table(df1$final)
 
@@ -53,7 +62,7 @@ system(sprintf("(echo %s; echo 1; echo 1; echo 2; echo 0) | oft-reclass -oi  %s 
 #################### COMPRESS RESULTS
 system(sprintf("gdal_translate -ot byte -co COMPRESS=LZW %s %s",
                "tmp_ipcc_1416.tif",
-               "ipcc_1416.tif"))
+               "ipcc_1416_Tp_EHc.tif"))
 
 #################### DELETE TEMP FILES
 system(sprintf(paste0("rm tmp*.tif")))

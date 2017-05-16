@@ -1,3 +1,7 @@
+### click on SOURCE
+
+
+
 ####################################################################################
 #######    object: SETUP YOUR LOCAL PARAMETERS                  ####################
 #######    Update : 2017/05/15                                  ####################
@@ -34,4 +38,6 @@ if(length(list)==0){
 
 ############### SET WORKING ENVIRONMENT
 rootdir <- "~/khm_ws_20170515/data/"
+
+
 setwd(rootdir)
