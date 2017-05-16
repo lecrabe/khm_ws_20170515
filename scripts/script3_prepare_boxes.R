@@ -4,12 +4,26 @@
 #######    contact: remi.dannunzio@fao.org                      ####################
 ####################################################################################
 
+#################### SET OPTIONS AND NECESSARY PACKAGES
+options(stringsAsFactors = FALSE)
+
+library(raster)
+library(rgdal)
+library(rgeos)
+library(ggplot2)
+library(foreign)
+library(dplyr)
+
+
 #######################################################################
 ##############################     SETUP YOUR DATA 
 #######################################################################
+setwd("/home/dannunzio/Documents/cambodia/")
 
 ## Read the datafile and setup the correct names for the variables
-pts <- read.csv("aa_design_output/pts_CE_2017-05-15.csv")
+pts <- read.csv("pts_cambodia_CE_2017-05-16.csv")
+dir.create("gee_kml_files")
+
 names(pts)
 map_code <- "map_class"
 point_id <- "id"
@@ -59,7 +73,7 @@ proj4string(spdf)<-CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs8
 head(spdf)
 
 #################### Export as shapefile or KML
-writeOGR(obj=spdf,dsn="pts_2km_boxes.kml",layer="pts_2km_boxes",driver="KML",overwrite_layer = T)
+writeOGR(obj=spdf,dsn="gee_kml_files/pts_2km_boxes.kml",layer="pts_2km_boxes",driver="KML",overwrite_layer = T)
 #writeOGR(obj=spdf,dsn="pts_2km_boxes.shp",layer="pts_2km_boxes",driver="ESRI Shapefile",overwrite_layer = T)
 
 
@@ -105,7 +119,7 @@ nrow(sqr_df_selected@data)
 #######################################################################
 base_sqr <- paste("download_area_grid_lsat",sep="")
 #writeOGR(obj=sqr_df_selected,dsn=paste(base_sqr,".shp",sep=""),layer=base_sqr,driver = "ESRI Shapefile",overwrite_layer = T)
-writeOGR(obj=sqr_df_selected,dsn=paste(base_sqr,".kml",sep=""),layer=base_sqr,driver = "KML",overwrite_layer = T)
+writeOGR(obj=sqr_df_selected,dsn=paste("gee_kml_files/",base_sqr,".kml",sep=""),layer=base_sqr,driver = "KML",overwrite_layer = T)
 
 
 #######################################################################
@@ -150,5 +164,5 @@ nrow(sqr_df_selected@data)
 #######################################################################
 base_sqr <- paste("download_area_grid_stnl",sep="")
 #writeOGR(obj=sqr_df_selected,dsn=paste(base_sqr,".shp",sep=""),layer=base_sqr,driver = "ESRI Shapefile",overwrite_layer = T)
-writeOGR(obj=sqr_df_selected,dsn=paste(base_sqr,".kml",sep=""),layer=base_sqr,driver = "KML",overwrite_layer = T)
+writeOGR(obj=sqr_df_selected,dsn=paste("gee_kml_files/",base_sqr,".kml",sep=""),layer=base_sqr,driver = "KML",overwrite_layer = T)
 

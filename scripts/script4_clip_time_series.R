@@ -38,13 +38,13 @@ stnl_dir <- paste0(rootdir)
 
 #### Name of the directory where your data will be stored in output
 dest_dir <- paste0(rootdir,"clip_time_series_test/")
-                   
+
 dir.create(dest_dir)
 
 # Preparation of files ----------------------------------------------------
 
 # ## Read the datafile and setup the correct names for the variables
-pts <- read.csv("CE_2017-05-13.csv")
+pts <- read.csv("pts_cambodia_CE_2017-05-16.csv")
 
 head(pts)
 names(pts)
@@ -68,7 +68,7 @@ pt_df_geo <- SpatialPointsDataFrame(
 
 
 ################ Create the index of the Landsat tiles
-list_lsat <- list.files(lsat_dir,pattern=glob2rx("median_hul_clip_lsat_2013_bb1.tif"))
+list_lsat <- list.files(lsat_dir,pattern="lsat_2013")
 lp <- list()
 
 for(file in list_lsat){
@@ -97,7 +97,7 @@ lsat_idx@data
 plot(lsat_idx)
 
 ################ Create the index of the Sentinel tiles
-list_s2 <- list.files(stnl_dir,pattern=glob2rx("median_hul_clip_s2_*_2016.tif"))
+list_s2 <- list.files(stnl_dir,pattern="s2_2016")
 lp<-list()
 
 for(file in list_s2){
@@ -211,8 +211,8 @@ head(pts)
 dev.off()
 
 ## The export image will be in a 4 (height) x 5 (width) grid box
-dim_v_grid <- 4
-dim_h_grid <- 5
+dim_v_grid <- 1
+dim_h_grid <- 6
 
 for(the_id in listodo){
   
@@ -237,7 +237,7 @@ for(the_id in listodo){
     one_poly@bbox["x","max"]+100/111321,
     one_poly@bbox["y","min"]-100/111321,
     one_poly@bbox["y","max"]+100/111321)
-
+  
   ####################################################################
   ################# Find the corresponding indexes
   lsat_bbox <- the_pt[,"pts_lsat$bb"]
@@ -248,7 +248,7 @@ for(the_id in listodo){
   ## The export image will be in a 4 (height) x 5 (width) grid box
   par(mfrow = c(dim_v_grid,dim_h_grid))
   par(mar=c(1,0,1,0))
-
+  
   ndvi_trend <- data.frame(matrix(nrow=0,ncol=2))
   names(ndvi_trend) <- c("year","mean")
   i <- 1
@@ -285,45 +285,46 @@ for(the_id in listodo){
   
   
   
- 
+  
   ####################################################################
   ################# Clip the sentinel tile 
   for(year in c(2016:2017)){
     plot(margins,axes=F,xlab="",ylab="")
-  the_pt
-  tryCatch({
-    stnl <- brick(paste(stnl_dir,"median_hul_clip_s2_",stnl_bbox,"_",year,".tif",sep=""))
-    stnl_clip<-crop(stnl,one_poly)
+    print(year)
+    the_pt
+    tryCatch({
+      stnl <- brick(paste(stnl_dir,"median_hul_clip_s2_",year,"_",stnl_bbox,".tif",sep=""))
+      stnl_clip<-crop(stnl,one_poly)
+      
+      blu <- raster(stnl_clip,1)
+      grn <- raster(stnl_clip,2)
+      red <- raster(stnl_clip,3)
+      nir <- raster(stnl_clip,4)
+      
+      #ndvi <- (nir-red)/(nir+red)
+      
+      R <- red
+      G <- grn
+      B <- blu
+      
+      stackNat <- stack(R,G,B)
+      ndvi <- (nir-red)/(nir+red)
+      #nbr  <- (nir-swir)/(nir+swir)
+      
+      ndvi_trend[i,]$year <- year 
+      ndvi_trend[i,]$mean <- cellStats(crop(ndvi,in_poly),stat='mean')
+      i <- i + 1
+      #stackVeg <- stack(nir,ndvi,grn)
+      #stackNIR <- stack(nir,red,grn)
+      
+      plotRGB(stackNat,stretch="hist",add=T)
+      
+      
+    },error=function(e){cat("Configuration impossible \n")})
+    lines(in_poly,col="red",lwd=2)
+    #plot(in_poly,add=T,col="red")
     
-    blu <- raster(stnl_clip,1)
-    grn <- raster(stnl_clip,2)
-    red <- raster(stnl_clip,3)
-    nir <- raster(stnl_clip,4)
-    
-    #ndvi <- (nir-red)/(nir+red)
-    
-    R <- red
-    G <- grn
-    B <- blu
-    
-    stackNat <- stack(R,G,B)
-    ndvi <- (nir-red)/(nir+red)
-    #nbr  <- (nir-swir)/(nir+swir)
-    
-    ndvi_trend[i,]$year <- year 
-    ndvi_trend[i,]$mean <- cellStats(crop(ndvi,in_poly),stat='mean')
-    i <- i + 1
-    #stackVeg <- stack(nir,ndvi,grn)
-    #stackNIR <- stack(nir,red,grn)
-    
-    plotRGB(stackNat,stretch="hist",add=T)
-    
-    
-  },error=function(e){cat("Configuration impossible \n")})
-  lines(in_poly,col="red",lwd=2)
-  #plot(in_poly,add=T,col="red")
-  
-  title(main=paste0("sentinel_",year),font.main=200)
+    title(main=paste0("sentinel_",year),font.main=200)
   }
   
   ####################################################################
@@ -331,15 +332,15 @@ for(the_id in listodo){
   
   par(mar=c(2,2,2,2))
   tryCatch({
-  plot(ndvi_trend,
-       # yaxt='n',
-       # xaxt='n',
-       xlab="year",
-       ylab="",
-       ylim=c(0,1)
-  )
-  
-  title(main="mean ndvi",font.main=200)
+    plot(ndvi_trend,
+         # yaxt='n',
+         # xaxt='n',
+         xlab="year",
+         ylab="",
+         ylim=c(0,1)
+    )
+    
+    title(main="mean ndvi",font.main=200)
   },error=function(e){cat("Configuration impossible \n")})
   ####################################################################
   ### Close the image file
