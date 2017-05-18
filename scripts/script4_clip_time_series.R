@@ -44,7 +44,7 @@ dir.create(dest_dir)
 # Preparation of files ----------------------------------------------------
 
 # ## Read the datafile and setup the correct names for the variables
-pts <- read.csv("pts_cambodia_CE_2017-05-16.csv")
+pts <- read.csv("/home/dannunzio/Downloads/cambodia_CE_2017-05-18.csv")
 
 head(pts)
 names(pts)
@@ -159,9 +159,9 @@ outbox<-SpatialPolygonsDataFrame(
 )
 
 
-################# Create the one pixel box 1ha=(2*50)^2
+################# Create the 0.5 ha box (70m/2=35m)
 lp<-list()
-ysize <- 15/111321
+ysize <- 35/111321
 
 ## Loop through all points
 for(i in 1:nrow(pts)){

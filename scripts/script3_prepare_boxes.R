@@ -18,7 +18,7 @@ library(dplyr)
 #######################################################################
 ##############################     SETUP YOUR DATA 
 #######################################################################
-setwd("/home/dannunzio/Documents/cambodia/")
+setwd("~/Documents/cambodia/")
 
 ## Read the datafile and setup the correct names for the variables
 pts <- read.csv("pts_cambodia_CE_2017-05-16.csv")
@@ -71,7 +71,7 @@ spdf<-SpatialPolygonsDataFrame(
 proj4string(spdf)<-CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 
 head(spdf)
-
+plot(spdf)
 #################### Export as shapefile or KML
 writeOGR(obj=spdf,dsn="gee_kml_files/pts_2km_boxes.kml",layer="pts_2km_boxes",driver="KML",overwrite_layer = T)
 #writeOGR(obj=spdf,dsn="pts_2km_boxes.shp",layer="pts_2km_boxes",driver="ESRI Shapefile",overwrite_layer = T)
