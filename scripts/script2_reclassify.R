@@ -24,28 +24,38 @@ names(df1) <- c("code16","code14","chg_code" ,"pix_count","class14","ipcc_code_1
 df1$ipcc_chge <- df1$ipcc_code_14 *10 + df1$ipcc_code_16
 
 df1$final <- 0
+
 table(df1$ipcc_class_14,df1$ipcc_class_16,useNA = "always")
 
+unique(df1[df1$ipcc_class_16!="F",]$class16)
+
+nat_forest <- c("B","D","E","Ff","Se","M","Mr")
+sec_forest <- c("Tp","Pp","Fr")
+non_forest <- c("Bt","Bu","G","Hc","Hr","R","S","W","Ws","Rp","Po")
+
 ################## FOREST STABLE
-df1[df1$ipcc_class_14 == "F" & df1$ipcc_class_16 == "F",]$final <- 1
+df1[df1$class14 %in% nat_forest & df1$class16 %in% nat_forest,]$final <- 1
 
-################## NON FOREST STABLE
-df1[df1$ipcc_class_14 != "F" & df1$ipcc_class_16 != "F",]$final <- 2
+################## STABLE NON FOREST
+df1[df1$class14 %in% non_forest & df1$class16 %in% non_forest,]$final <- 2
 
-################## FOREST LOSS
-df1[df1$ipcc_class_14 == "F" & df1$ipcc_class_16 != "F",]$final <- 3
+################## DEFORESTATION
+df1[df1$class14 %in% nat_forest & df1$class16 %in% non_forest,]$final <- 3
+df1[df1$class14 %in% sec_forest & df1$class16 %in% non_forest,]$final <- 3
 
-################## FORET GAINS
-df1[df1$ipcc_class_14 != "F" & df1$ipcc_class_16 == "F",]$final <- 4
+################## FOREST DEGRADATION
+df1[df1$class14 %in% nat_forest & df1$class16 %in% sec_forest,]$final <- 4
 
-################## EVERGREEN LOSS TOWARDS AGRICULTURE
-df1[df1$class14 == "E" & df1$class16 == "Hc",]$final <- 5
+################## ENHANCEMENT
+df1[df1$class14 %in% sec_forest & df1$class16 %in% nat_forest,]$final <- 5
+df1[df1$class14 %in% non_forest & df1$class16 %in% nat_forest,]$final <- 5
+df1[df1$class14 %in% non_forest & df1$class16 %in% sec_forest,]$final <- 5
 
-################## PLANTATIONS
-df1[df1$class14 == "Tp" & df1$class16 == "Tp",]$final <- 6
+################## MANAGEMENT
+df1[df1$class14 %in% sec_forest & df1$class16 %in% sec_forest,]$final <- 6
 
 
-
+df1[df1$final == 0,c("class14","class16")]
 table(df1$final)
 
 write.table(df1[,c("chg_code","final")],"reclass.txt",sep = " ",row.names = F,col.names = F)
@@ -55,14 +65,14 @@ write.csv(df1,"all_transitions.csv",row.names = F)
 #################### RECLASSIFY THE CHANGE RASTER
 system(sprintf("(echo %s; echo 1; echo 1; echo 2; echo 0) | oft-reclass -oi  %s  %s",
                "reclass.txt",
-               "tmp_ipcc_1416.tif",
+               "tmp_final_chge_1416.tif",
                "change_1416.tif"
 ))
 
 #################### COMPRESS RESULTS
 system(sprintf("gdal_translate -ot byte -co COMPRESS=LZW %s %s",
-               "tmp_ipcc_1416.tif",
-               "ipcc_1416_Tp_EHc.tif"))
+               "tmp_final_chge_1416.tif",
+               "final_change_1416.tif"))
 
 #################### DELETE TEMP FILES
 system(sprintf(paste0("rm tmp*.tif")))
