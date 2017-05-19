@@ -69,11 +69,19 @@ system(sprintf("(echo %s; echo 1; echo 1; echo 2; echo 0) | oft-reclass -oi  %s 
                "change_1416.tif"
 ))
 
+#################### SIEVE RESULTS
+system(sprintf("gdal_sieve.py -st %s %s %s",
+               3,
+               "tmp_final_chge_1416.tif",
+               "tmp_sieve_final_chge_1416.tif"))
+
 #################### COMPRESS RESULTS
 system(sprintf("gdal_translate -ot byte -co COMPRESS=LZW %s %s",
-               "tmp_final_chge_1416.tif",
+               "tmp_sieve_final_chge_1416.tif",
                "final_change_1416.tif"))
 
 #################### DELETE TEMP FILES
 system(sprintf(paste0("rm tmp*.tif")))
+
+
 
