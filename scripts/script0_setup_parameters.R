@@ -28,13 +28,10 @@ library(foreign)
 library(dplyr)
 
 ############### DOWNLOAD WORKSHOP DATA
-list <- list.files("~/khm_ws_20170515/data")
+  #setwd("~/khm_ws_20170515")
+  #system("wget https://www.dropbox.com/s/n5f6d7ssc2c4lqx/workshop_KHM_2017.zip?dl=0")
+  #system("unzip workshop_KHM_2017.zip?dl=0" )
 
-if(length(list)==0){
-  setwd("~/khm_ws_20170515")
-  system("wget https://www.dropbox.com/s/n5f6d7ssc2c4lqx/workshop_KHM_2017.zip?dl=0")
-  system("unzip workshop_KHM_2017.zip?dl=0" )
-}
 
 ############### SET WORKING ENVIRONMENT
 rootdir <- "~/khm_ws_20170515/data/"
